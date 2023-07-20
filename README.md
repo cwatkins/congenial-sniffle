@@ -1,4 +1,4 @@
-# Stytch Next.js example application
+# Stytch Next.js OTP example application
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/100632220/217049841-b9eeb72a-3e50-4074-839a-e64ee5d4a88c.png" width="750">
@@ -6,11 +6,13 @@
 
 ## Overview
 
-This example application demonstrates how one may use Stytch within a Next.js application. This project was bootstrapped with [Create Next App](https://nextjs.org/docs/api-reference/create-next-app).
+This example application demonstrates how one may use Stytch OTP to pre-clude possible account takeover within a Next.js application. It uses the Stripe Customer Portal as an account page that's guarded by a OTP flow.
 
-This project uses Stytch's [Next.js SDK](https://stytch.com/docs/sdks/javascript-sdk) which provides pre-built UI components, useful React hooks, headless methods to securely interact with Stytch, and is SSR friendly. This project also utilizes Stytch's [Node Backend SDK](https://www.npmjs.com/package/stytch) for authenticating the logged in user's session.  
+This project was bootstrapped with [Create Next App](https://nextjs.org/docs/api-reference/create-next-app).
 
-This application features Email Magic Links and Google OAuth authentication. You can use this application's source code as a learning resource, or use it as a jumping off point for your own project. We are excited to see what you build with Stytch!
+This project uses Stytch's [Next.js SDK](https://stytch.com/docs/sdks/javascript-sdk) which provides pre-built UI components, useful React hooks, headless methods to securely interact with Stytch, and is SSR friendly. This project also utilizes Stytch's [Node Backend SDK](https://www.npmjs.com/package/stytch) for authenticating the logged in user's session.
+
+This application features Email Magic Links, Google OAuth authentication, and email-based OTP. You can use this application's source code as a learning resource, or use it as a jumping off point for your own project. We are excited to see what you build with Stytch!
 
 ## Set up
 
@@ -24,23 +26,23 @@ Follow the steps below to get this application fully functional and running usin
 
    - Click **Enable SDK**.
    - Under **Authorized environments** add the domain `http://localhost:3000`.
-     
+
      <img width="400" alt="Authorized environments" src="https://user-images.githubusercontent.com/100632220/217052985-2e6fc264-7b8b-452b-9d24-66a76c143d10.png">
 
    - Within the **Email Magic Links** drawer, toggle on **Enable the LoginOrCreate Flow**.
-     
+
      <img width="400" alt="SDK Email Magic Links" src="https://user-images.githubusercontent.com/100632220/217053215-8c369de8-7828-4ad6-ac88-a50918520fc3.png">
 
    - Toggle on **OAuth**.
-     
+
      <img width="400" alt="SDK OAuth" src="https://user-images.githubusercontent.com/100632220/217053483-e757d1aa-af18-4af3-a476-45860ca3065f.png">
 
 3. Navigate to [Redirect URLs](https://stytch.com/dashboard/redirect-urls), and add `http://localhost:3000/authenticate` as the types **Login** and **Sign-up**.
-   
+
    <img width="400" alt="Redirect URLs" src="https://user-images.githubusercontent.com/100632220/217983021-d8bf6fff-6a68-4e94-bffd-d062e69c8817.png">
 
 4. Navigate to [OAuth](https://stytch.com/dashboard/oauth), and set up login for Google in the Test environment. Follow all the instructions provided in the Dashboard. If you are not interested in OAuth login you can skip this step. However, the _Continue with Google_ button in this application will not work.
-   
+
    <img width="400" alt="OAuth configuration" src="https://user-images.githubusercontent.com/100632220/217055674-a7dafc17-6ad3-492f-8dd2-92560d60dc00.png">
 
 5. Finally, navigate to [API Keys](https://stytch.com/dashboard/api-keys). You will need the `project_id`, `secret`, and `public_token` values found on this page later on.
@@ -56,6 +58,7 @@ npm i
 ```
 
 Next, create `.env.local` file by running the command below which copies the contents of `.env.template`.
+
 ```bash
 cp .env.template .env.local
 ```
@@ -68,6 +71,8 @@ STYTCH_PROJECT_ENV=test
 STYTCH_PROJECT_ID=project-test-00000000-0000-1234-abcd-abcdef1234
 NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN=public-token-test-abcd123-0000-0000-abcd-1234567abc
 STYTCH_SECRET=secret-test-12345678901234567890abcdabcd
+STRIPE_SECRET_KEY=sk_test_123213123
+STRIPE_CUSTOMER=cus_12323123
 ```
 
 ## Running locally

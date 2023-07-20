@@ -3,7 +3,7 @@ import { useStytch, useStytchUser } from "@stytch/nextjs";
 import { useRouter } from "next/router";
 import { useSessionStorage } from "usehooks-ts";
 
-const Manage = ({ setVerified }) => {
+const Manage = () => {
   const stytch = useStytch();
   const { user } = useStytchUser();
   const router = useRouter();
@@ -20,7 +20,12 @@ const Manage = ({ setVerified }) => {
       method: "POST",
       body: JSON.stringify({ code: input }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
       .then(({ error, url }) => {
         if (error) {
           console.log(error);
@@ -30,6 +35,10 @@ const Manage = ({ setVerified }) => {
           setOtpExpiration(new Date());
           router.replace(url);
         }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setMessage("An error occurred. Please try again later.");
       });
   }
 

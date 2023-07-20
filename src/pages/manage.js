@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useStytchUser, useStytch } from "@stytch/nextjs";
 import Manage from "src/components/Manage";
 import loadStytch from "lib/loadStytch";
 import { useSessionStorage } from "usehooks-ts";
 
-export default function ProfilePage() {
+export default function ManagePage() {
   const stytch = useStytch();
   const { user, isInitialized } = useStytchUser();
   const router = useRouter();
@@ -22,12 +22,16 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const sendOtp = async () => {
-      const result = await stytch.otps.email.loginOrCreate(
-        user.emails[0].email,
-        {
-          expiration_minutes: 5,
-        }
-      );
+      try {
+        const result = await stytch.otps.email.loginOrCreate(
+          user.emails[0].email,
+          {
+            expiration_minutes: 5,
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
     };
     if (isInitialized && user) {
       const now = new Date();

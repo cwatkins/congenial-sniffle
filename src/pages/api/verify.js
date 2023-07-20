@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const stytch = require("stytch");
 
@@ -14,18 +13,20 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: "NOT AUTHORIZED" });
   }
 
-  const { user } = await stytchClient.sessions.authenticate({
-    session_token: stytchSession,
-  });
+  try {
+    const { user } = await stytchClient.sessions.authenticate({
+      session_token: stytchSession,
+    });
 
-  if (req.method === "POST") {
-    try {
+    if (req.method === "POST") {
       const { code } = JSON.parse(req.body);
+
       // Verify the OTP
       const result = await stytchClient.otps.authenticate({
         code,
         method_id: user.emails[0].email_id,
       });
+
       // Redirect to the Customer Portal
       // In production, search for the Stripe customer associated
       // with the user first.
@@ -34,14 +35,23 @@ export default async function handler(req, res) {
         customer: process.env.STRIPE_CUSTOMER,
         return_url: "http://localhost:3000/",
       });
+
       res.json({ url });
-    } catch (e) {
-      console.log(e);
+    } else {
       res
         .status(400)
-        .json({ error: { message: error?.error_message ?? "ERROR" } });
+        .json({ error: "Invalid request method. Only POST is allowed." });
     }
-  } else {
-    res.status(400).json({ error: "ERROR" });
+  } catch (error) {
+    console.error("Error in verify API:", error);
+
+    if (error.response && error.response.status === 400) {
+      // Stytch API returned a 400 status code
+      res.status(400).json({
+        error: { message: error.response.data?.error_message ?? "ERROR" },
+      });
+    } else {
+      res.status(500).json({ error: "Internal server error." });
+    }
   }
 }
